@@ -115,92 +115,77 @@ def compute_gradient(x, y, w, b):
     dj_dw = dj_dw / m
     return dj_dw, dj_db
 
-def compute_gradient2(x, y, w, b):
-    """
-          x (ndarray): Shape (m,) Input to the model (Population of cities)
-          y (ndarray): Shape (m,) Label (Actual profits for the cities)
-          w, b (scalar): Parameters of the model
-        Returns
-          dj_dw (scalar): The gradient of the cost with respect to the parameters w
-          dj_db (scalar): The gradient of the cost with respect to the parameter b
-         """
-    # gradient descent:
-    # 𝑏=𝑏−𝛼 ∂𝐽(𝑤,𝑏)/∂𝑏
-    # ∂𝐽(𝑤,𝑏)/∂𝑏=1𝑚∑(𝑓𝑤,𝑏(𝑥(𝑖))−𝑦(𝑖))
-    # 𝑤=𝑤−𝛼 ∂𝐽(𝑤,𝑏)/∂𝑤
-    # ∂𝐽(𝑤,𝑏)/∂𝑤=1𝑚∑(𝑓𝑤,𝑏(𝑥(𝑖))−𝑦(𝑖))𝑥(𝑖)
-
-    # Number of training examples
-    m = x.shape[0]
-    dj_dw = 0
-    dj_db = 0
-    for i in range(m):
-        f_wb = w*x[i]+b
-        dj_dw = dj_dw + (f_wb-y[i])*x[i]
-        dj_db = dj_db + (f_wb - y[i])
-
-    dj_dw = dj_dw/m
-    dj_db = dj_db / m
-    return dj_dw, dj_db
-
 # Compute and display gradient with w initialized to zeroes
 initial_w = 0
 initial_b = 0
-tmp_dj_dw, tmp_dj_db = compute_gradient2(x_train, y_train, initial_w, initial_b)
+tmp_dj_dw, tmp_dj_db = compute_gradient(x_train, y_train, initial_w, initial_b)
 print('Gradient at initial w, b (zeros):', tmp_dj_dw, tmp_dj_db)
-# Gradient at initial w, b (zeros): -65.32884974555672 -5.83913505154639
+# Expected Output: Gradient at initial w, b (zeros): -65.32884974555672 -5.83913505154639
 
 test_w = 0.2
 test_b = 0.2
-tmp_dj_dw, tmp_dj_db = compute_gradient2(x_train, y_train, test_w, test_b)
+tmp_dj_dw, tmp_dj_db = compute_gradient(x_train, y_train, test_w, test_b)
 print('Gradient at test w, b:', tmp_dj_dw, tmp_dj_db)
-# Gradient at test w, b: -47.41610118114435 -4.007175051546391
+# Expected Output: Gradient at test w, b: -47.41610118114435 -4.007175051546391
 
 # 3. gradient_descent
-def gradient_descent(x, y, w_in, b_in, cost_function, gradient_function, alpha, num_iters):
+def gradient_descent(x, y, w_in, b_in, alpha, num_iters, cost_function, gradient_function):
     """
-      x :    (ndarray): Shape (m,)
-      y :    (ndarray): Shape (m,)
-      w_in, b_in : (scalar) Initial values of parameters of the model
-      cost_function: function to compute cost
-      gradient_function: function to compute the gradient
-      alpha : (float) Learning rate
-      num_iters : (int) number of iterations to run gradient descent
-    Returns
-      w : (ndarray): Shape (1,) Updated values of parameters of the model after running gradient descent
-      b : (scalar)                Updated value of parameter of the model after running gradient descent
-    """
+    Args:
+      x (ndarray (m,))  : Data, m examples
+      y (ndarray (m,))  : target values
+      w_in,b_in (scalar): initial values of model parameters
+      alpha (float):     Learning rate
+      num_iters (int):   number of iterations to run gradient descent
+      cost_function:     function to call to produce cost
+      gradient_function: function to call to produce gradient
+    Returns:
+      w (scalar): Updated value of parameter after running gradient descent
+      b (scalar): Updated value of parameter after running gradient descent
+      J_history (List): History of cost values
+      p_history (list): History of parameters [w,b]
+      """
+    # An array to store cost J and w's at each iteration primarily for graphing later
+    J_history = []
+    p_history = []
+    b = b_in
+    w = w_in
+
+    for i in range(num_iters):
+        # Calculate the gradient and update the parameters using gradient_function
+        dj_dw, dj_db = gradient_function(x, y, w, b)  # get ∂𝐽(𝑤,𝑏)/∂w and ∂𝐽(𝑤,𝑏)/∂b
+        # Update Parameters using equation (3) above
+        b = b - alpha * dj_db
+        w = w - alpha * dj_dw
+        # Save cost J at each iteration
+        if i < 100000:  # prevent resource exhaustion
+            J_history.append(cost_function(x, y, w, b))  # store all total_cost
+            p_history.append([w, b])  # store all w,b
+        # Print cost every at intervals 10 times or as many iterations if < 10
+        if i % math.ceil(num_iters / 10) == 0:
+            print(f"Iteration {i:4}: Cost {J_history[-1]:0.2e} ",
+                  f"dj_dw: {dj_dw: 0.3e}, dj_db: {dj_db: 0.3e}  ",
+                  f"w: {w: 0.3e}, b:{b: 0.5e}")
+    return w, b, J_history, p_history  # return w and J,w history for graphing
+
+def gradient_descent3(x, y, w_in, b_in, cost_function, gradient_function, alpha, num_iters):
     # number of training examples
     m = len(x)
     # An array to store cost J and w's at each iteration — primarily for graphing later
     J_history = []
     w_history = []
-    w = copy.deepcopy(w_in)  # avoid modifying global w within function
-    b = b_in
-    for i in range(num_iters):
-        # Calculate the gradient and update the parameters
-        dj_dw, dj_db = gradient_function(x, y, w, b)
-        # Update Parameters using w, b, alpha and gradient
-        w = w - alpha * dj_dw
-        b = b - alpha * dj_db
-        # Save cost J at each iteration
-        if i < 100000:  # prevent resource exhaustion
-            cost = cost_function(x, y, w, b)
-            J_history.append(cost)
-        # Print cost every at intervals 10 times or as many iterations if < 10
-        if i % math.ceil(num_iters / 10) == 0:
-            w_history.append(w)
-            print(f"Iteration {i:4}: Cost {float(J_history[-1]):8.2f}   ")
+
     return w, b, J_history, w_history  # return w and J,w history for graphing
 
 # initialize fitting parameters. Recall that the shape of w is (n,)
 initial_w = 0.
 initial_b = 0.
 # some gradient descent settings
-iterations = 10000
+iterations = 1500
 alpha = 0.01
-w,b,J_history,w_history = gradient_descent(x_train ,y_train, initial_w, initial_b, compute_cost, compute_gradient, alpha, iterations)
+w,b,J_history,w_history = gradient_descent(x_train ,y_train, initial_w, initial_b, alpha, iterations, compute_cost, compute_gradient)
 print("w,b found by gradient descent:", w, b)
+# Expected Output: w, b found by gradient descent 1.16636235 -3.63029143940436
 
 m = x_train.shape[0]
 predicted = np.zeros(m)
