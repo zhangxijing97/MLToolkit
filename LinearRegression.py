@@ -150,7 +150,6 @@ def gradient_descent(x, y, w_in, b_in, alpha, num_iters, cost_function, gradient
     p_history = []
     b = b_in
     w = w_in
-
     for i in range(num_iters):
         # Calculate the gradient and update the parameters using gradient_function
         dj_dw, dj_db = gradient_function(x, y, w, b)  # get ∂𝐽(𝑤,𝑏)/∂w and ∂𝐽(𝑤,𝑏)/∂b
@@ -164,18 +163,10 @@ def gradient_descent(x, y, w_in, b_in, alpha, num_iters, cost_function, gradient
         # Print cost every at intervals 10 times or as many iterations if < 10
         if i % math.ceil(num_iters / 10) == 0:
             print(f"Iteration {i:4}: Cost {J_history[-1]:0.2e} ",
-                  f"dj_dw: {dj_dw: 0.3e}, dj_db: {dj_db: 0.3e}  ",
+                  f"dj_dw: {dj_dw: 0.3e}, dj_db: {dj_db: 0.3e} ",
                   f"w: {w: 0.3e}, b:{b: 0.5e}")
     return w, b, J_history, p_history  # return w and J,w history for graphing
-
-def gradient_descent3(x, y, w_in, b_in, cost_function, gradient_function, alpha, num_iters):
-    # number of training examples
-    m = len(x)
-    # An array to store cost J and w's at each iteration — primarily for graphing later
-    J_history = []
-    w_history = []
-
-    return w, b, J_history, w_history  # return w and J,w history for graphing
+# Note: math.ceil() round up the result
 
 # initialize fitting parameters. Recall that the shape of w is (n,)
 initial_w = 0.
@@ -183,7 +174,7 @@ initial_b = 0.
 # some gradient descent settings
 iterations = 1500
 alpha = 0.01
-w,b,J_history,w_history = gradient_descent(x_train ,y_train, initial_w, initial_b, alpha, iterations, compute_cost, compute_gradient)
+w,b,J_history,p_history = gradient_descent(x_train ,y_train, initial_w, initial_b, alpha, iterations, compute_cost, compute_gradient)
 print("w,b found by gradient descent:", w, b)
 # Expected Output: w, b found by gradient descent 1.16636235 -3.63029143940436
 
@@ -211,3 +202,10 @@ print('For population = 70,000, we predict a profit of $%.2f' % (predict2*10000)
 
 # show the plot
 # plt.show()
+
+# scientific notation example
+number = 123.123
+formatted_number = f"{number:e}"  # transfer to scientific notation
+print(formatted_number)
+formatted_number = f"{number:0.2e}"  # .2e means two digits after the decimal point
+print(formatted_number)
