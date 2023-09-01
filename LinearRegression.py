@@ -1,7 +1,7 @@
 # Linear Regression with one feature
-# def compute_cost(x, y, w, b):
-# def compute_gradient(x, y, w, b):
-# def gradient_descent(x, y, w_in, b_in, cost_function, gradient_function, alpha, num_iters):
+# 1. def compute_cost(x, y, w, b):
+# 2. def compute_gradient(x, y, w, b):
+# 3. def gradient_descent(x, y, w_in, b_in, cost_function, gradient_function, alpha, num_iters):
 
 # model function: 𝑓𝑤,𝑏(𝑥)=𝑤𝑥+𝑏
 # cost function: 𝐽(𝑤,𝑏)=1/2𝑚∑(𝑓𝑤,𝑏(𝑥(𝑖))−𝑦(𝑖))^2
