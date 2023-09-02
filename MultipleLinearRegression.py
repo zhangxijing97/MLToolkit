@@ -78,6 +78,11 @@ def compute_cost(X, y, w, b):
 # ∂𝐽(𝑤,𝑏)/∂𝑏 is dj_db
 # gradient = derivative = rate of change of a function
 # When w,b is a certain value, find the derivative of the cost function
+#   y = wx + b
+#                         |2104  1416   852|
+#   |y y y| = |w w w w| * |5     3      2  | + |b b b|
+#                         |1     2      1  |
+#                         |45    40     35 |
 def compute_gradient(X, y, w, b):
     """
     Args:
@@ -98,12 +103,16 @@ def compute_gradient(X, y, w, b):
     m,n = X.shape
     dj_dw = np.zeros((n,)) # get 4*1(rows 1 columns) matrix
     dj_db = 0
+    # ∂𝐽(𝑤,𝑏)/∂w=1/𝑚 * ∑(𝑓𝑤,𝑏(X(𝑖))−𝑦(𝑖))
+    # 𝑓𝑤,𝑏(X(𝑖))−𝑦(𝑖) = (wx + b) - y(i)
+    #             |2104  1416   852|
+    # |w w w w| * |5     3      2  | + |b b b| - |y y y|
+    #             |1     2      1  |
+    #             |45    40     35 |
 
-    #   y = wx + b
-    #                         |2104  1416   852|
-    #   |y y y| = |w w w w| * |5     3      2  | + |b b b|
-    #                         |1     2      1  |
-    #                         |45    40     35 |
+
+
+
 
 
 
@@ -114,16 +123,6 @@ def compute_gradient(X, y, w, b):
         dj_db = dj_db + err
     dj_dw = dj_dw / m
     dj_db = dj_db / m
-
-    # for i in range(m):
-    #     f_wb = np.dot(X[i], w) + b
-    #     dj_dw_i = (f_wb - y[i]) * X[i]
-    #     dj_db_i = f_wb - y[i]
-    #     dj_db += dj_db_i  # update derivative of ∂𝐽(𝑤,𝑏)/∂b
-    #     dj_dw += dj_dw_i  # update derivative of ∂𝐽(𝑤,𝑏)/∂w
-    # dj_db = dj_db / m
-    # dj_dw = dj_dw / m
-
     return dj_db, dj_dw
 
 #Compute and display gradient
