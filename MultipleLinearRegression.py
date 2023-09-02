@@ -74,78 +74,10 @@ def compute_cost(X, y, w, b):
     cost = cost / (2 * m)  # scalar
     return cost
 
-# 2. compute_gradient
-# ∂𝐽(𝑤,𝑏)/∂𝑏 is dj_db
-# gradient = derivative = rate of change of a function
-# When w,b is a certain value, find the derivative of the cost function
-def compute_gradient(x, y, w, b):
-    """
-      x (ndarray): Shape (m,) Input to the model (Population of cities)
-      y (ndarray): Shape (m,) Label (Actual profits for the cities)
-      w, b (scalar): Parameters of the model
-    Returns
-      dj_dw (scalar): The gradient of the cost with respect to the parameters w
-      dj_db (scalar): The gradient of the cost with respect to the parameter b
-     """
-    # gradient descent:
-    # 𝑏=𝑏−𝛼 ∂𝐽(𝑤,𝑏)/∂𝑏
-    # ∂𝐽(𝑤,𝑏)/∂𝑏=1𝑚∑(𝑓𝑤,𝑏(𝑥(𝑖))−𝑦(𝑖))
-    # 𝑤=𝑤−𝛼 ∂𝐽(𝑤,𝑏)/∂𝑤
-    # ∂𝐽(𝑤,𝑏)/∂𝑤=1𝑚∑(𝑓𝑤,𝑏(𝑥(𝑖))−𝑦(𝑖))𝑥(𝑖)
-
-    # Number of training examples
-    m = x.shape[0]
-    dj_dw = 0
-    dj_db = 0
-    for i in range(m):
-        f_wb = w * x[i] + b
-        dj_dw_i = (f_wb - y[i]) * x[i]
-        dj_db_i = f_wb - y[i]
-        dj_db += dj_db_i  # update derivative of ∂𝐽(𝑤,𝑏)/∂b
-        dj_dw += dj_dw_i  # update derivative of ∂𝐽(𝑤,𝑏)/∂w
-    dj_db = dj_db / m
-    dj_dw = dj_dw / m
-    return dj_dw, dj_db
-
-# Compute and display cost using our pre-chosen optimal parameters.
-cost = compute_cost(X_train, y_train, w_init, b_init)
-print(f'Cost at optimal w : {cost}')
-# Expected Result: Cost at optimal w : 1.5578904045996674e-12
-
 # 3. compute_gradient
 # ∂𝐽(𝑤,𝑏)/∂𝑏 is dj_db
 # gradient = derivative = rate of change of a function
 # When w,b is a certain value, find the derivative of the cost function
-def compute_gradient(x, y, w, b):
-    """
-      x (ndarray): Shape (m,) Input to the model (Population of cities)
-      y (ndarray): Shape (m,) Label (Actual profits for the cities)
-      w, b (scalar): Parameters of the model
-    Returns
-      dj_dw (scalar): The gradient of the cost with respect to the parameters w
-      dj_db (scalar): The gradient of the cost with respect to the parameter b
-     """
-    # gradient descent:
-    # 𝑏=𝑏−𝛼 ∂𝐽(𝑤,𝑏)/∂𝑏
-    # ∂𝐽(𝑤,𝑏)/∂𝑏=1𝑚∑(𝑓𝑤,𝑏(𝑥(𝑖))−𝑦(𝑖))
-    # 𝑤=𝑤−𝛼 ∂𝐽(𝑤,𝑏)/∂𝑤
-    # ∂𝐽(𝑤,𝑏)/∂𝑤=1𝑚∑(𝑓𝑤,𝑏(𝑥(𝑖))−𝑦(𝑖))𝑥(𝑖)
-
-    # Number of training examples
-    m = x.shape[0]
-    dj_dw = 0
-    dj_db = 0
-    for i in range(m):
-        f_wb = w * x[i] + b
-        dj_dw_i = (f_wb - y[i]) * x[i]
-        dj_db_i = f_wb - y[i]
-        dj_db += dj_db_i  # update derivative of ∂𝐽(𝑤,𝑏)/∂b
-        dj_dw += dj_dw_i  # update derivative of ∂𝐽(𝑤,𝑏)/∂w
-    dj_db = dj_db / m
-    dj_dw = dj_dw / m
-    return dj_dw, dj_db
-
-
 def compute_gradient(X, y, w, b):
     """
     Args:
@@ -159,5 +91,13 @@ def compute_gradient(X, y, w, b):
     """
 
 
+
     return dj_db, dj_dw
 
+#Compute and display gradient
+tmp_dj_db, tmp_dj_dw = compute_gradient(X_train, y_train, w_init, b_init)
+print(f'dj_db at initial w,b: {tmp_dj_db}')
+print(f'dj_dw at initial w,b: \n {tmp_dj_dw}')
+# Expected Result:
+# dj_db at initial w,b: -1.6739251122999121e-06
+# dj_dw at initial w,b: [-2.73e-03 -6.27e-06 -2.22e-06 -6.92e-05]
