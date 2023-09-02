@@ -57,7 +57,7 @@ plt.xlabel('Population of City in 10,000s')
 # 1. compute_cost
 def compute_cost(x, y, w, b):
     """
-    Computes the cost function for linear regression.
+    Args:
         x (ndarray): Shape (m,) Input to the model (Population of cities)
         y (ndarray): Shape (m,) Label (Actual profits for the cities)
         w, b (scalar): Parameters of the model
@@ -88,6 +88,7 @@ print(f'Cost at initial w: {cost:.3f}')
 # When w,b is a certain value, find the derivative of the cost function
 def compute_gradient(x, y, w, b):
     """
+    Args:
       x (ndarray): Shape (m,) Input to the model (Population of cities)
       y (ndarray): Shape (m,) Label (Actual profits for the cities)
       w, b (scalar): Parameters of the model
