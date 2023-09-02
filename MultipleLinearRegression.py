@@ -89,8 +89,40 @@ def compute_gradient(X, y, w, b):
       dj_dw (ndarray (n,)): The gradient of the cost w.r.t. the parameters w.
       dj_db (scalar):       The gradient of the cost w.r.t. the parameter b.
     """
+    # ∂𝐽(𝑤,𝑏)/∂w=1/𝑚 * ∑(𝑓𝑤,𝑏(X(𝑖))−𝑦(𝑖))
+    # 𝑓𝑤,𝑏(X(𝑖))=w1x1+w2x2...wixi
+    # X(𝑖) is 4*1, 𝑦(𝑖) is 4*1, w is 4*1
+
+    # m(3) rows/example,
+    # n(4) columns/features
+    m,n = X.shape
+    dj_dw = np.zeros((n,)) # get 4*1(rows 1 columns) matrix
+    dj_db = 0
+
+    #   y = wx + b
+    #                         |2104  1416   852|
+    #   |y y y| = |w w w w| * |5     3      2  | + |b b b|
+    #                         |1     2      1  |
+    #                         |45    40     35 |
 
 
+
+    for i in range(m):
+        err = (np.dot(X[i], w) + b) - y[i] # X[i] get i row of X, err is 1*1
+        for j in range(n):
+            dj_dw[j] = dj_dw[j] + err * X[i, j]
+        dj_db = dj_db + err
+    dj_dw = dj_dw / m
+    dj_db = dj_db / m
+
+    # for i in range(m):
+    #     f_wb = np.dot(X[i], w) + b
+    #     dj_dw_i = (f_wb - y[i]) * X[i]
+    #     dj_db_i = f_wb - y[i]
+    #     dj_db += dj_db_i  # update derivative of ∂𝐽(𝑤,𝑏)/∂b
+    #     dj_dw += dj_dw_i  # update derivative of ∂𝐽(𝑤,𝑏)/∂w
+    # dj_db = dj_db / m
+    # dj_dw = dj_dw / m
 
     return dj_db, dj_dw
 
