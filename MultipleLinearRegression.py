@@ -78,11 +78,6 @@ def compute_cost(X, y, w, b):
 # ∂𝐽(𝑤,𝑏)/∂𝑏 is dj_db
 # gradient = derivative = rate of change of a function
 # When w,b is a certain value, find the derivative of the cost function
-#   y = wx + b
-#                         |2104  1416   852|
-#   |y y y| = |w w w w| * |5     3      2  | + |b b b|
-#                         |1     2      1  |
-#                         |45    40     35 |
 def compute_gradient(X, y, w, b):
     """
     Args:
@@ -94,31 +89,31 @@ def compute_gradient(X, y, w, b):
       dj_dw (ndarray (n,)): The gradient of the cost w.r.t. the parameters w.
       dj_db (scalar):       The gradient of the cost w.r.t. the parameter b.
     """
-    # ∂𝐽(𝑤,𝑏)/∂w=1/𝑚 * ∑(𝑓𝑤,𝑏(X(𝑖))−𝑦(𝑖))
-    # 𝑓𝑤,𝑏(X(𝑖))=w1x1+w2x2...wixi
-    # X(𝑖) is 4*1, 𝑦(𝑖) is 4*1, w is 4*1
+    # one feature:
+    # 𝑏 = 𝑏−𝛼 ∂𝐽(𝑤, 𝑏) /∂𝑏
+    # ∂𝐽(𝑤, 𝑏) /∂𝑏 = 1 / 𝑚 * ∑(𝑓𝑤, 𝑏(X(𝑖))−𝑦(𝑖))
+    # 𝑤 = 𝑤−𝛼 ∂𝐽(𝑤, 𝑏) /∂𝑤
+    # ∂𝐽(𝑤, 𝑏) /∂𝑤 = 1 / 𝑚 * ∑(𝑓𝑤, 𝑏(X(𝑖))−𝑦(𝑖)) * 𝑥(𝑖)
+
+    # n features:
+    # 𝑏 = 𝑏−𝛼 ∂𝐽(𝑤, 𝑏) /∂𝑏
+    # ∂𝐽(𝑤, 𝑏) /∂𝑏 = 1 / 𝑚 * ∑(𝑓𝑤, 𝑏(X(𝑖))−𝑦(𝑖))
+    # 𝑤1 = 𝑤1−𝛼 * 1 / 𝑚 * ∑(𝑓𝑤, 𝑏(X(𝑖))−𝑦(𝑖)) * 𝑥(𝑖)1
+    # 𝑤2 = 𝑤2−𝛼 * 1 / 𝑚 * ∑(𝑓𝑤, 𝑏(X(𝑖))−𝑦(𝑖)) * 𝑥(𝑖)2
+    # note:
+    # xj = jth feature
+    # x(i) = ith example
+    # x(i)j = jth feature of ith example
 
     # m(3) rows/example,
     # n(4) columns/features
     m,n = X.shape
     dj_dw = np.zeros((n,)) # get 4*1(rows 1 columns) matrix
     dj_db = 0
-    # ∂𝐽(𝑤,𝑏)/∂w=1/𝑚 * ∑(𝑓𝑤,𝑏(X(𝑖))−𝑦(𝑖))
-    # 𝑓𝑤,𝑏(X(𝑖))−𝑦(𝑖) = (wx + b) - y(i)
-    #             |2104  1416   852|
-    # |w w w w| * |5     3      2  | + |b b b| - |y y y|
-    #             |1     2      1  |
-    #             |45    40     35 |
-
-
-
-#test
-
-
 
     for i in range(m):
-        err = (np.dot(X[i], w) + b) - y[i] # X[i] get i row of X, err is 1*1
-        for j in range(n):
+        err = (np.dot(X[i], w) + b) - y[i] # calculate the err of y and y hat
+        for j in range(n): # get w1, w2, wj ... for all x
             dj_dw[j] = dj_dw[j] + err * X[i, j]
         dj_db = dj_db + err
     dj_dw = dj_dw / m
@@ -132,3 +127,64 @@ print(f'dj_dw at initial w,b: \n {tmp_dj_dw}')
 # Expected Result:
 # dj_db at initial w,b: -1.6739251122999121e-06
 # dj_dw at initial w,b: [-2.73e-03 -6.27e-06 -2.22e-06 -6.92e-05]
+
+# 4. def gradient_descent
+def gradient_descent(X, y, w_in, b_in, cost_function, gradient_function, alpha, num_iters):
+    """
+    Args:
+      X (ndarray (m,n))   : Data, m examples with n features
+      y (ndarray (m,))    : target values
+      w_in (ndarray (n,)) : initial model parameters
+      b_in (scalar)       : initial model parameter
+      cost_function       : function to compute cost
+      gradient_function   : function to compute the gradient
+      alpha (float)       : Learning rate
+      num_iters (int)     : number of iterations to run gradient descent
+    Returns:
+      w (ndarray (n,)) : Updated values of parameters
+      b (scalar)       : Updated value of parameter
+      """
+    # An array to store cost J and w's at each iteration primarily for graphing later
+    J_history = []
+    w = copy.deepcopy(w_in)  # avoid modifying global w within function
+    b = b_in
+    for i in range(num_iters):
+        # Calculate the gradient and update the parameters
+        dj_db, dj_dw = gradient_function(X, y, w, b)  ##None
+        # Update Parameters using w, b, alpha and gradient
+        w = w - alpha * dj_dw  ##None
+        b = b - alpha * dj_db  ##None
+        # Save cost J at each iteration
+        if i < 100000:  # prevent resource exhaustion
+            J_history.append(cost_function(X, y, w, b))
+        # Print cost every at intervals 10 times or as many iterations if < 10
+        if i % math.ceil(num_iters / 10) == 0:
+            print(f"Iteration {i:4d}: Cost {J_history[-1]:8.2f}   ")
+    return w, b, J_history  # return final w,b and J history for graphing
+
+# initialize parameters
+initial_w = np.zeros_like(w_init)
+initial_b = 0.
+# some gradient descent settings
+iterations = 1000
+alpha = 5.0e-7
+# run gradient descent
+w_final, b_final, J_hist = gradient_descent(X_train, y_train, initial_w, initial_b, compute_cost, compute_gradient, alpha, iterations)
+print(f"b,w found by gradient descent: {b_final:0.2f},{w_final} ")
+m,_ = X_train.shape
+for i in range(m):
+    print(f"prediction: {np.dot(X_train[i], w_final) + b_final:0.2f}, target value: {y_train[i]}")
+# Expected Result:
+# b,w found by gradient descent: -0.00,[ 0.2 0. -0.01 -0.07]
+# prediction: 426.19, target value: 460
+# prediction: 286.17, target value: 232
+# prediction: 171.47, target value: 178
+
+# plot cost versus iteration
+fig, (ax1, ax2) = plt.subplots(1, 2, constrained_layout=True, figsize=(12, 4))
+ax1.plot(J_hist)
+ax2.plot(100 + np.arange(len(J_hist[100:])), J_hist[100:])
+ax1.set_title("Cost vs. iteration");  ax2.set_title("Cost vs. iteration (tail)")
+ax1.set_ylabel('Cost')             ;  ax2.set_ylabel('Cost')
+ax1.set_xlabel('iteration step')   ;  ax2.set_xlabel('iteration step')
+# plt.show()
